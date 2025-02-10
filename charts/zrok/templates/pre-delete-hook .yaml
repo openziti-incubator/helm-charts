@@ -23,7 +23,6 @@ spec:
         app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
         app.kubernetes.io/instance: {{ .Release.Name | quote }}
         helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-        {{- include "zrok.labelsFrontend" . | nindent 8 }}
       {{- with .Values.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
@@ -65,6 +64,14 @@ spec:
               subPath: zitiLogin
           command: ["{{ .Values.frontend.deBootstrapScript }}"]
           # command: ["sh", "-c", "while true; do sleep 86400; done"]
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       volumes:
         - name: zrok-config
           configMap:
